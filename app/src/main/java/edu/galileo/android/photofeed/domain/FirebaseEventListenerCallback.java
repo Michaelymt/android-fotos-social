@@ -1,13 +1,14 @@
 package edu.galileo.android.photofeed.domain;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 /**
- * Created by ykro.
+ * Created by joedayz.
  */
 public interface FirebaseEventListenerCallback {
     void onChildAdded(DataSnapshot dataSnapshot);
     void onChildRemoved(DataSnapshot dataSnapshot);
-    void onCancelled(FirebaseError error);
+    void onCancelled(DatabaseError error);
 }

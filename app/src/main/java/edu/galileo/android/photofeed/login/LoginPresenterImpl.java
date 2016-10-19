@@ -8,7 +8,8 @@ import edu.galileo.android.photofeed.login.events.LoginEvent;
 import edu.galileo.android.photofeed.login.ui.LoginView;
 
 /**
- * Created by ykro.
+ * @author  ykro.
+ * @author josediaz
  */
 public class LoginPresenterImpl implements LoginPresenter {
     EventBus eventBus;
@@ -24,7 +25,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
-    public void login(String email, String password) {
+    public void validateLogin(String email, String password) {
         if (loginView != null) {
             loginView.disableInputs();
             loginView.showProgress();
@@ -54,6 +55,11 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
+    public void checkForAuthenticatedUser() {
+
+    }
+
+    @Override
     @Subscribe
     public void onEventMainThread(LoginEvent event) {
         switch (event.getEventType()) {
@@ -74,6 +80,8 @@ public class LoginPresenterImpl implements LoginPresenter {
                 break;
         }
     }
+
+
 
     private void onSignInSuccess(String email) {
         if (loginView != null) {

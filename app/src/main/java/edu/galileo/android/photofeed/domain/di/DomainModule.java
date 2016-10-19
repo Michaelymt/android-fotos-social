@@ -3,7 +3,8 @@ package edu.galileo.android.photofeed.domain.di;
 import android.content.Context;
 import android.location.Geocoder;
 
-import com.firebase.client.Firebase;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import javax.inject.Singleton;
 
@@ -13,22 +14,23 @@ import edu.galileo.android.photofeed.domain.FirebaseAPI;
 import edu.galileo.android.photofeed.domain.Util;
 
 /**
- * Created by ykro.
+ * Created by joedayz.
  */
 @Module
 public class DomainModule {
-    private final static String FIREBASE_URL = "https://android-photo-share.firebaseio.com/";
+    private final static String FIREBASE_URL = "https://joe-android-photo-share.firebaseio.com";
 
     @Provides
     @Singleton
-    FirebaseAPI providesFirebaseAPI(Firebase firebase) {
+    FirebaseAPI providesFirebaseAPI(DatabaseReference  firebase) {
         return new FirebaseAPI(firebase);
     }
 
     @Provides
     @Singleton
-    Firebase providesFirebase() {
-        return new Firebase(FIREBASE_URL);
+    DatabaseReference providesFirebase() {
+        return  FirebaseDatabase.getInstance()
+                .getReferenceFromUrl(FIREBASE_URL);
     }
 
     @Provides

@@ -21,6 +21,7 @@ import edu.galileo.android.photofeed.R;
 import edu.galileo.android.photofeed.login.LoginPresenter;
 import edu.galileo.android.photofeed.main.ui.MainActivity;
 
+/
 
 public class LoginActivity extends AppCompatActivity
                            implements LoginView {
@@ -48,7 +49,7 @@ public class LoginActivity extends AppCompatActivity
 
         setupInjection();
         presenter.onCreate();
-        presenter.login(null, null);
+        presenter.checkForAuthenticatedUser();
     }
 
     private void setupInjection() {
@@ -71,7 +72,7 @@ public class LoginActivity extends AppCompatActivity
     @Override
     @OnClick(R.id.btnSignin)
     public void handleSignIn() {
-        presenter.login(inputEmail.getText().toString(),
+        presenter.validateLogin(inputEmail.getText().toString(),
                 inputPassword.getText().toString());
     }
 

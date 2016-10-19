@@ -1,24 +1,29 @@
 package edu.galileo.android.photofeed.domain;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
 
-import java.util.Map;
+import android.support.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import edu.galileo.android.photofeed.entities.Photo;
 
 /**
- * Created by ykro.
+ * Created by joedayz.
  */
 public class FirebaseAPI {
-    private Firebase firebase;
+    private DatabaseReference firebase;
     private ChildEventListener photosEventListener;
 
-    public FirebaseAPI(Firebase firebase) {
+    public FirebaseAPI(DatabaseReference firebase) {
         this.firebase = firebase;
     }
 
@@ -33,7 +38,7 @@ public class FirebaseAPI {
                 }
             }
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
                 listener.onError(firebaseError);
             }
         });
@@ -61,7 +66,7 @@ public class FirebaseAPI {
                 }
 
                 @Override
-                public void onCancelled(FirebaseError firebaseError) {
+                public void onCancelled(DatabaseError firebaseError) {
                     listener.onCancelled(firebaseError);
                 }
             };
@@ -78,7 +83,7 @@ public class FirebaseAPI {
     }
 
     public void update(Photo photo) {
-        Firebase reference = this.firebase.child(photo.getId());
+        DatabaseReference reference = this.firebase.child(photo.getId());
         reference.setValue(photo);
     }
 
@@ -88,44 +93,66 @@ public class FirebaseAPI {
     }
 
     public String getAuthEmail(){
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String email = null;
-        if (firebase.getAuth() != null) {
-            Map<String, Object> providerData = firebase.getAuth().getProviderData();
-            email = providerData.get("email").toString();
+        if (user != null) {
+            email = user.getEmail();
         }
         return email;
     }
 
     public void signUp(String email, String password, final FirebaseActionListenerCallback listener){
-        firebase.createUser(email, password, new Firebase.ValueResultHandler<Map<String, Object>>() {
-            @Override
-            public void onSuccess(Map<String, Object> result) {
-                listener.onSuccess();
-            }
 
-            @Override
-            public void onError(FirebaseError firebaseError) {
-                listener.onError(firebaseError);
-            }
-        });
+        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        listener.onSuccess();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        listener.onError(null);
+                    }
+                });
+
     }
 
     public void login(String email, String password, final FirebaseActionListenerCallback listener){
-        firebase.authWithPassword(email, password, new Firebase.AuthResultHandler() {
-            @Override
-            public void onAuthenticated(AuthData authData) {
-                listener.onSuccess();
-            }
+        try {
+            FirebaseAuth auth = FirebaseAuth.getInstance();
+            auth.signInWithEmailAndPassword(email, password)
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                            //myUserReference = helper.getMyUserReference();
+                            myUserReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                   listener.onSuccess();
+                                }
+                                @Override
+                                public void onCancelled(DatabaseError firebaseError) {
+                                   listener.onError(firebaseError);
+                                }
+                            });
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            //postEvent(LoginEvent.onSignInError, e.getMessage());
+                        }
+                    });
+        } catch (Exception e) {
+            //postEvent(LoginEvent.onSignInError, e.getMessage());
+        }
 
-            @Override
-            public void onAuthenticationError(FirebaseError firebaseError) {
-                listener.onError(firebaseError);
-            }
-        });
     }
 
     public void checkForSession(FirebaseActionListenerCallback listener) {
-        if (firebase.getAuth() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             listener.onSuccess();
         } else {
             listener.onError(null);
@@ -133,6 +160,6 @@ public class FirebaseAPI {
     }
 
     public void logout() {
-        firebase.unauth();
+        FirebaseAuth.getInstance().signOut();
     }
 }
