@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "993341474465",
+    "firebase_url": "https://joe-android-photo-share.firebaseio.com",
+    "project_id": "joe-android-photo-share",
+    "storage_bucket": "joe-android-photo-share.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:993341474465:android:e14757b7f0cdffe3",
+        "android_client_info": {
+          "package_name": "edu.galileo.android.photofeed"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "993341474465-kpms68bgke7r6525jmicabs7quql05fi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.galileo.android.photofeed",
+            "certificate_hash": "649B40175C6E560B43BBE6A6268A501CE530DA4B"
+          }
+        },
+        {
+          "client_id": "993341474465-4c4obm0i98idfpvsd9l3booi0qju9rtg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVBkauRBVriGinTxzGVZOXRAYeP0PYTyE"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "993341474465-4c4obm0i98idfpvsd9l3booi0qju9rtg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -15,13 +15,13 @@ public class LoginPresenterImpl implements LoginPresenter {
     EventBus eventBus;
     LoginView loginView;
     LoginInteractor loginInteractor;
-    SignupInteractor signupInteractor;
 
-    public LoginPresenterImpl(EventBus eventBus, LoginView loginView, LoginInteractor loginInteractor, SignupInteractor signupInteractor) {
+
+    public LoginPresenterImpl(EventBus eventBus, LoginView loginView, LoginInteractor loginInteractor) {
         this.eventBus = eventBus;
         this.loginView = loginView;
         this.loginInteractor = loginInteractor;
-        this.signupInteractor = signupInteractor;
+
     }
 
     @Override
@@ -31,7 +31,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             loginView.showProgress();
         }
 
-        loginInteractor.execute(email, password);
+        loginInteractor.doSignIn(email, password);
     }
 
     @Override
@@ -40,7 +40,7 @@ public class LoginPresenterImpl implements LoginPresenter {
             loginView.disableInputs();
             loginView.showProgress();
         }
-        signupInteractor.execute(email, password);
+        loginInteractor.doSignUp(email, password);
     }
 
     @Override
@@ -56,7 +56,12 @@ public class LoginPresenterImpl implements LoginPresenter {
 
     @Override
     public void checkForAuthenticatedUser() {
+        if (loginView != null) {
+            loginView.disableInputs();
+            loginView.showProgress();
+        }
 
+        loginInteractor.checkAlreadyAuthenticated();
     }
 
     @Override

@@ -4,5 +4,7 @@ package edu.galileo.android.photofeed.login;
  * Created by ykro.
  */
 public interface LoginInteractor {
-    void execute(String email, String password);
+    void checkAlreadyAuthenticated();
+    void doSignIn(String email, String password);
+    void doSignUp(String email, String password);
 }

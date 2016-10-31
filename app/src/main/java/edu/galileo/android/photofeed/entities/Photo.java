@@ -1,14 +1,14 @@
 package edu.galileo.android.photofeed.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+//import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Created by ykro.
  */
 public class Photo {
-    @JsonIgnore
+    //@JsonIgnore
     private String id;
-    @JsonIgnore
+    //@JsonIgnore
     private boolean publishedByMe;
 
     private String url;

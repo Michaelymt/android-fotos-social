@@ -4,7 +4,7 @@ import android.app.Application;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.firebase.client.Firebase;
+
 
 import edu.galileo.android.photofeed.domain.di.DomainModule;
 import edu.galileo.android.photofeed.lib.di.LibsModule;
@@ -21,6 +21,7 @@ import edu.galileo.android.photofeed.photolist.di.PhotoListComponent;
 import edu.galileo.android.photofeed.photolist.di.PhotoListModule;
 import edu.galileo.android.photofeed.photolist.ui.PhotoListView;
 import edu.galileo.android.photofeed.photolist.ui.adapters.OnItemClickListener;
+
 import edu.galileo.android.photofeed.photomap.di.DaggerPhotoMapComponent;
 import edu.galileo.android.photofeed.photomap.di.PhotoMapComponent;
 import edu.galileo.android.photofeed.photomap.di.PhotoMapModule;
@@ -49,7 +50,9 @@ public class PhotoFeedApp extends Application {
     }
 
     private void initFirebase() {
-        Firebase.setAndroidContext(this);
+
+
+        //TODO Firebase.setAndroidContext(this);
     }
 
     public static String getEmailKey() {

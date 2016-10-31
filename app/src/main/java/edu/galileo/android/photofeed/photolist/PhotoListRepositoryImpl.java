@@ -1,11 +1,7 @@
 package edu.galileo.android.photofeed.photolist;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
 
-import edu.galileo.android.photofeed.domain.FirebaseAPI;
-import edu.galileo.android.photofeed.domain.FirebaseActionListenerCallback;
-import edu.galileo.android.photofeed.domain.FirebaseEventListenerCallback;
+
 import edu.galileo.android.photofeed.entities.Photo;
 import edu.galileo.android.photofeed.lib.base.EventBus;
 import edu.galileo.android.photofeed.photolist.events.PhotoListEvent;
@@ -15,16 +11,16 @@ import edu.galileo.android.photofeed.photolist.events.PhotoListEvent;
  */
 public class PhotoListRepositoryImpl implements PhotoListRepository {
     private EventBus eventBus;
-    private FirebaseAPI firebase;
 
-    public PhotoListRepositoryImpl(FirebaseAPI firebase, EventBus eventBus) {
-        this.firebase = firebase;
+
+    public PhotoListRepositoryImpl( EventBus eventBus) {
+
         this.eventBus = eventBus;
     }
 
     @Override
     public void subscribe() {
-        firebase.checkForData(new FirebaseActionListenerCallback() {
+/*   TODO     firebase.checkForData(new FirebaseActionListenerCallback() {
             @Override
             public void onSuccess() {
             }
@@ -64,17 +60,18 @@ public class PhotoListRepositoryImpl implements PhotoListRepository {
             public void onCancelled(FirebaseError error) {
                 post(PhotoListEvent.READ_EVENT, error.getMessage());
             }
-        });
+        });*/
     }
 
     @Override
     public void unsubscribe() {
-        firebase.unsubscribe();
+
+        //TODO firebase.unsubscribe();
     }
 
     @Override
     public void remove(final Photo photo) {
-        firebase.remove(photo, new FirebaseActionListenerCallback() {
+/*      TODO  firebase.remove(photo, new FirebaseActionListenerCallback() {
             @Override
             public void onSuccess() {
                 post(PhotoListEvent.DELETE_EVENT, photo);
@@ -84,7 +81,7 @@ public class PhotoListRepositoryImpl implements PhotoListRepository {
             public void onError(FirebaseError error) {
 
             }
-        });
+        });*/
     }
 
     private void post(int type, Photo photo){

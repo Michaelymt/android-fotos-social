@@ -4,7 +4,6 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import edu.galileo.android.photofeed.domain.FirebaseAPI;
 import edu.galileo.android.photofeed.lib.base.EventBus;
 import edu.galileo.android.photofeed.photomap.PhotoMapInteractor;
 import edu.galileo.android.photofeed.photomap.PhotoMapInteractorImpl;
@@ -41,7 +40,7 @@ public class PhotoMapModule {
     }
 
     @Provides @Singleton
-    PhotoMapRepository providesPhotoContentRepository(FirebaseAPI firebase, EventBus eventBus) {
-        return new PhotoMapRepositoryImpl(firebase, eventBus);
+    PhotoMapRepository providesPhotoContentRepository(EventBus eventBus) {
+        return new PhotoMapRepositoryImpl( eventBus);
     }
 }

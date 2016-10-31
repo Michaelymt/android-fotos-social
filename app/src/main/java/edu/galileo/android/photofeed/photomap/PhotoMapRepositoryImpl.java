@@ -1,10 +1,7 @@
 package edu.galileo.android.photofeed.photomap;
 
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.FirebaseError;
 
-import edu.galileo.android.photofeed.domain.FirebaseAPI;
-import edu.galileo.android.photofeed.domain.FirebaseEventListenerCallback;
+
 import edu.galileo.android.photofeed.entities.Photo;
 import edu.galileo.android.photofeed.lib.base.EventBus;
 import edu.galileo.android.photofeed.photomap.events.PhotoMapEvent;
@@ -14,16 +11,16 @@ import edu.galileo.android.photofeed.photomap.events.PhotoMapEvent;
  */
 public class PhotoMapRepositoryImpl implements PhotoMapRepository {
     private EventBus eventBus;
-    private FirebaseAPI firebase;
+    //private FirebaseAPI firebase;
 
-    public PhotoMapRepositoryImpl(FirebaseAPI firebase, EventBus eventBus) {
-        this.firebase = firebase;
+    public PhotoMapRepositoryImpl(EventBus eventBus) {
+        //this.firebase = firebase;
         this.eventBus = eventBus;
     }
 
     @Override
     public void subscribe() {
-        firebase.subscribe(new FirebaseEventListenerCallback() {
+   /*   TODO  firebase.subscribe(new FirebaseEventListenerCallback() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot) {
                 Photo photo = dataSnapshot.getValue(Photo.class);
@@ -48,12 +45,13 @@ public class PhotoMapRepositoryImpl implements PhotoMapRepository {
             public void onCancelled(FirebaseError error) {
                 post(error.getMessage());
             }
-        });
+        });*/
     }
 
     @Override
     public void unsubscribe() {
-        firebase.unsubscribe();
+
+        //TODO firebase.unsubscribe();
     }
 
     private void post(int type, Photo photo){
