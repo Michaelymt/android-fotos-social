@@ -33,7 +33,7 @@ public class PhotoMapRepositoryImpl implements PhotoMapRepository {
 
                 String email = firebase.getAuthEmail();
 
-                boolean publishedByMy = photo.getEmail().equals(email);
+                boolean publishedByMy = photo.getEmail()!=null?photo.getEmail().equals(email):false;
                 photo.setPublishedByMe(publishedByMy);
                 postEvent(PhotoMapEvent.READ_EVENT, photo);
             }
