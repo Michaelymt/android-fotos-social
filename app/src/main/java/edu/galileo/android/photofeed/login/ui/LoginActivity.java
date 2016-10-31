@@ -49,7 +49,7 @@ public class LoginActivity extends AppCompatActivity
 
         setupInjection();
         presenter.onCreate();
-        presenter.checkForAuthenticatedUser();
+        presenter.login(null, null);
     }
 
     private void setupInjection() {
@@ -72,7 +72,7 @@ public class LoginActivity extends AppCompatActivity
     @Override
     @OnClick(R.id.btnSignin)
     public void handleSignIn() {
-        presenter.validateLogin(inputEmail.getText().toString(),
+        presenter.login(inputEmail.getText().toString(),
                 inputPassword.getText().toString());
     }
 

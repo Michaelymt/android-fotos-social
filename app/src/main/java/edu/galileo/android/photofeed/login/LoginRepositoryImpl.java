@@ -23,8 +23,6 @@ import edu.galileo.android.photofeed.login.events.LoginEvent;
  */
 public class LoginRepositoryImpl implements LoginRepository {
     private EventBus eventBus;
-
-
     private FirebaseHelper helper;
     private DatabaseReference dataReference;
     private DatabaseReference myUserReference;
@@ -100,7 +98,7 @@ public class LoginRepositoryImpl implements LoginRepository {
             registerNewUser();
         }
         helper.changeUserConnectionStatus(User.ONLINE);
-        postEvent(LoginEvent.onSignInSuccess);
+        postEvent(LoginEvent.onSignInSuccess,null, currentUser.getEmail());
     }
 
     private void registerNewUser() {
@@ -111,25 +109,6 @@ public class LoginRepositoryImpl implements LoginRepository {
         }
     }
 
-    @Override
-    public void checkAlreadyAuthenticated() {
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            myUserReference = helper.getMyUserReference();
-            myUserReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    initSignIn(snapshot);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError firebaseError) {
-                    postEvent(LoginEvent.onSignInError, firebaseError.getMessage());
-                }
-            });
-        } else {
-            postEvent(LoginEvent.onFailedToRecoverSession);
-        }
-    }
 
 
     private void postEvent(int type) {
@@ -137,13 +116,14 @@ public class LoginRepositoryImpl implements LoginRepository {
     }
 
     private void postEvent(int type, String errorMessage) {
+        postEvent(type, errorMessage, null);
+    }
+
+    private void postEvent(int type, String errorMessage, String loggedUserEmail) {
         LoginEvent loginEvent = new LoginEvent();
         loginEvent.setEventType(type);
-        if (errorMessage != null) {
-            loginEvent.setErrorMesage(errorMessage);
-        }
-
-        //EventBus eventBus = GreenRobotEventBus.getInstance();
+        loginEvent.setErrorMesage(errorMessage);
+        loginEvent.setLoggedUserEmail(loggedUserEmail);
         eventBus.post(loginEvent);
     }
 

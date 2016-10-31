@@ -8,8 +8,7 @@ import edu.galileo.android.photofeed.login.events.LoginEvent;
 public interface LoginPresenter {
     void onCreate();
     void onDestroy();
-    void checkForAuthenticatedUser();
     void onEventMainThread(LoginEvent event);
-    void validateLogin(String email, String password);
+    void login(String email, String password);
     void registerNewUser(String email, String password);
 }

@@ -1,8 +1,10 @@
 package edu.galileo.android.photofeed.main.ui;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.location.Location;
@@ -14,6 +16,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -50,13 +53,19 @@ import edu.galileo.android.photofeed.photomap.ui.PhotoMapFragment;
 
 public class MainActivity extends AppCompatActivity implements MainView, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    @Bind(R.id.toolbar) Toolbar toolbar;
-    @Bind(R.id.tabs) TabLayout tabLayout;
-    @Bind(R.id.viewPager) ViewPager viewPager;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.tabs)
+    TabLayout tabLayout;
+    @Bind(R.id.viewPager)
+    ViewPager viewPager;
 
-    @Inject MainPresenter presenter;
-    @Inject MainSectionsPagerAdapter adapter;
-    @Inject SharedPreferences sharedPreferences;
+    @Inject
+    MainPresenter presenter;
+    @Inject
+    MainSectionsPagerAdapter adapter;
+    @Inject
+    SharedPreferences sharedPreferences;
 
     private String photoPath;
     private Location lastLocation;
@@ -134,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
 
     private void setupNavigation() {
         PhotoFeedApp app = (PhotoFeedApp) getApplication();
-        String email = sharedPreferences.getString(app.getEmailKey(),"");
+        String email = sharedPreferences.getString(app.getEmailKey(), "");
         toolbar.setTitle(email);
         setSupportActionBar(toolbar);
 
@@ -143,11 +152,11 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
     }
 
     private void setupInjection() {
-        String[] titles = new String[]{ getString(R.string.main_title_list),
-                                        getString(R.string.main_title_map)};
+        String[] titles = new String[]{getString(R.string.main_title_list),
+                getString(R.string.main_title_map)};
 
-        Fragment[] fragments = new Fragment[]{ new PhotoListFragment(),
-                                               new PhotoMapFragment()};
+        Fragment[] fragments = new Fragment[]{new PhotoListFragment(),
+                new PhotoMapFragment()};
 
         PhotoFeedApp app = (PhotoFeedApp) getApplication();
         app.getMainComponent(this, getSupportFragmentManager(), fragments, titles).inject(this);
@@ -179,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
         if (intentList.size() > 0) {
             chooserIntent = Intent.createChooser(intentList.remove(intentList.size() - 1),
                     getString(R.string.main_message_picture_source));
-                    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
+            chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentList.toArray(new Parcelable[]{}));
         }
 
         startActivityForResult(chooserIntent, REQUEST_PICTURE);
@@ -196,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
         return list;
     }
 
-    private File getFile(){
+    private File getFile() {
         File photoFile = null;
         try {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -213,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_PICTURE) {
             boolean isCamera = (data == null ||
-                                data.getData() == null);
+                    data.getData() == null);
 
             if (isCamera) {
                 addPicToGallery();
@@ -231,7 +240,7 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
         if (cursor == null) {
             result = contentURI.getPath();
         } else {
-            if (contentURI.toString().contains("mediaKey")){
+            if (contentURI.toString().contains("mediaKey")) {
                 cursor.close();
 
                 try {
@@ -291,6 +300,16 @@ public class MainActivity extends AppCompatActivity implements MainView, GoogleA
 
     @Override
     public void onConnected(Bundle bundle) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         lastLocation = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
     }
 

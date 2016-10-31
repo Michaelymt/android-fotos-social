@@ -25,7 +25,7 @@ public class LoginPresenterImpl implements LoginPresenter {
     }
 
     @Override
-    public void validateLogin(String email, String password) {
+    public void login(String email, String password) {
         if (loginView != null) {
             loginView.disableInputs();
             loginView.showProgress();
@@ -54,15 +54,7 @@ public class LoginPresenterImpl implements LoginPresenter {
         eventBus.unregister(this);
     }
 
-    @Override
-    public void checkForAuthenticatedUser() {
-        if (loginView != null) {
-            loginView.disableInputs();
-            loginView.showProgress();
-        }
 
-        loginInteractor.checkAlreadyAuthenticated();
-    }
 
     @Override
     @Subscribe

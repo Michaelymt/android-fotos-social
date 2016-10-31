@@ -16,10 +16,6 @@ public class LoginInteractorImpl implements LoginInteractor {
         loginRepository.signIn(email, password);
     }
 
-    @Override
-    public void checkAlreadyAuthenticated() {
-        loginRepository.checkAlreadyAuthenticated();
-    }
 
     @Override
     public void doSignUp(String email, String password) {

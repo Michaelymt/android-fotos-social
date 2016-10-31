@@ -29,11 +29,11 @@ ext {
     compileSdkVersion = 23
     buildToolsVersion = '23.0.2'
 
-    supportLibraryVersion = '23.1.1'
+    supportLibraryVersion = '23.3.0'
 
     playServicesLocationVersion = '9.6.1'
     circleImageViewVersion = '2.0.0'
-    firebaseVersion = '9.0.2'
+    firebaseVersion = '9.6.1'
     butterknifeVersion = '7.0.1'
     cloudinaryVersion = '1.1.2'
     eventbusVersion = '3.0.0'
