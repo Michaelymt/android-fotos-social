@@ -1,113 +1,92 @@
 package edu.galileo.android.photofeed.login;
 
-import android.support.annotation.NonNull;
-
-
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
-import edu.galileo.android.photofeed.domain.FirebaseHelper;
-import edu.galileo.android.photofeed.entities.User;
-
+import edu.galileo.android.photofeed.domain.FirebaseAPI;
+import edu.galileo.android.photofeed.domain.FirebaseActionListenerCallback;
 import edu.galileo.android.photofeed.lib.base.EventBus;
 import edu.galileo.android.photofeed.login.events.LoginEvent;
 
 /**
  * Created by ykro.
+ * Updated by joedayz.
  */
 public class LoginRepositoryImpl implements LoginRepository {
     private EventBus eventBus;
-    private FirebaseHelper helper;
-    private DatabaseReference dataReference;
-    private DatabaseReference myUserReference;
+    private FirebaseAPI firebase;
 
-    public LoginRepositoryImpl(EventBus eventBus) {
+    public LoginRepositoryImpl(FirebaseAPI firebaseAPI, EventBus eventBus) {
         this.eventBus = eventBus;
-        helper = FirebaseHelper.getInstance();
-        dataReference = helper.getDataReference();
-        myUserReference = helper.getMyUserReference();
+        firebase = firebaseAPI;
     }
-
 
 
     @Override
     public void signUp(final String email, final String password) {
+        firebase.signUp(email, password, new FirebaseActionListenerCallback() {
+            @Override
+            public void onSuccess() {
+                postEvent(LoginEvent.onSignUpSuccess);
+                signIn(email, password);
+            }
 
-        FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
-                .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        postEvent(LoginEvent.onSignUpSuccess);
-                        signIn(email, password);
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        postEvent(LoginEvent.onSignUpError, e.getMessage());
-                    }
-                });
+            @Override
+            public void onException(Exception ex) {
+                postEvent(LoginEvent.onSignUpError, ex.getMessage());
+            }
 
+            @Override
+            public void onError(DatabaseError error) {
+                postEvent(LoginEvent.onSignUpError, error.getMessage());
+            }
+        });
     }
 
     @Override
     public void signIn(String email, String password) {
 
+        if (email != null && password != null) {
+            firebase.login(email, password, new FirebaseActionListenerCallback() {
+                @Override
+                public void onSuccess() {
+                    String email = firebase.getAuthEmail();
+                    postEvent(LoginEvent.onSignInSuccess, null, email);
+                }
 
-        try {
-            FirebaseAuth auth = FirebaseAuth.getInstance();
-            auth.signInWithEmailAndPassword(email, password)
-                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                        @Override
-                        public void onSuccess(AuthResult authResult) {
-                            myUserReference = helper.getMyUserReference();
-                            myUserReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    initSignIn(snapshot);
-                                }
-                                @Override
-                                public void onCancelled(DatabaseError firebaseError) {
-                                    postEvent(LoginEvent.onSignInError, firebaseError.getMessage());
-                                }
-                            });
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            postEvent(LoginEvent.onSignInError, e.getMessage());
-                        }
-                    });
-        } catch (Exception e) {
-            postEvent(LoginEvent.onSignInError, e.getMessage());
+                @Override
+                public void onException(Exception ex) {
+                    postEvent(LoginEvent.onSignInError, ex.getMessage());
+                }
+
+                @Override
+                public void onError(DatabaseError error) {
+                    postEvent(LoginEvent.onSignInError, error.getMessage());
+                }
+
+            });
+        } else {
+            firebase.checkForSession(new FirebaseActionListenerCallback() {
+                @Override
+                public void onSuccess() {
+                    String email = firebase.getAuthEmail();
+                    postEvent(LoginEvent.onSignInSuccess, null, email);
+                }
+
+                @Override
+                public void onException(Exception ex) {
+                    postEvent(LoginEvent.onFailedToRecoverSession);
+                }
+
+                @Override
+                public void onError(DatabaseError databaseError) {
+                    postEvent(LoginEvent.onFailedToRecoverSession);
+                }
+
+            });
         }
+
     }
 
-
-    private void initSignIn(DataSnapshot snapshot){
-        User currentUser = snapshot.getValue(User.class);
-
-        if (currentUser == null) {
-            registerNewUser();
-        }
-        helper.changeUserConnectionStatus(User.ONLINE);
-        postEvent(LoginEvent.onSignInSuccess,null, currentUser.getEmail());
-    }
-
-    private void registerNewUser() {
-        String email = helper.getAuthUserEmail();
-        if (email != null) {
-            User currentUser = new User(email, true, null);
-            myUserReference.setValue(currentUser);
-        }
-    }
 
 
 

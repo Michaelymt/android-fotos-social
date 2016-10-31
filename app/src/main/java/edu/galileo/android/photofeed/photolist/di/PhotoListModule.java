@@ -7,6 +7,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.galileo.android.photofeed.domain.FirebaseAPI;
 import edu.galileo.android.photofeed.domain.Util;
 import edu.galileo.android.photofeed.entities.Photo;
 import edu.galileo.android.photofeed.lib.base.EventBus;
@@ -50,8 +51,8 @@ public class PhotoListModule {
     }
 
     @Provides @Singleton
-    PhotoListRepository providesPhotoListRepository( EventBus eventBus) {
-        return new PhotoListRepositoryImpl(eventBus);
+    PhotoListRepository providesPhotoListRepository(FirebaseAPI firebase, EventBus eventBus) {
+        return new PhotoListRepositoryImpl(firebase, eventBus);
     }
 
     @Provides @Singleton
