@@ -1,7 +1,7 @@
 package edu.galileo.android.photofeed.login.ui;
 
 /**
- * Created by joedayz.
+ * Created by ykro.
  */
 public interface LoginView {
     void enableInputs();
@@ -12,13 +12,10 @@ public interface LoginView {
     void handleSignUp();
     void handleSignIn();
 
-
-    void navigateToMainScreen();
-    void loginError(String error);
-
     void newUserSuccess();
-    void newUserError(String error);
-
-
+    void navigateToMainScreen();
     void setUserEmail(String email);
+
+    void loginError(String error);
+    void newUserError(String error);
 }

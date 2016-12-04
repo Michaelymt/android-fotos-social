@@ -2,95 +2,108 @@ package edu.galileo.android.photofeed.photolist;
 
 
 
+
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
 import edu.galileo.android.photofeed.domain.FirebaseAPI;
 import edu.galileo.android.photofeed.domain.FirebaseActionListenerCallback;
+import edu.galileo.android.photofeed.domain.FirebaseEventListenerCallback;
 import edu.galileo.android.photofeed.entities.Photo;
 import edu.galileo.android.photofeed.lib.base.EventBus;
 import edu.galileo.android.photofeed.photolist.events.PhotoListEvent;
 
 /**
  * Created by ykro.
- * Updated by joedayz.
  */
 public class PhotoListRepositoryImpl implements PhotoListRepository {
     private EventBus eventBus;
     private FirebaseAPI firebase;
 
-
-    public PhotoListRepositoryImpl( FirebaseAPI firebaseAPI, EventBus eventBus) {
-        this.firebase = firebaseAPI;
+    public PhotoListRepositoryImpl(FirebaseAPI firebase, EventBus eventBus) {
+        this.firebase = firebase;
         this.eventBus = eventBus;
     }
 
     @Override
     public void subscribe() {
-
         firebase.checkForData(new FirebaseActionListenerCallback() {
             @Override
             public void onSuccess() {
             }
 
             @Override
-            public void onException(Exception ex) {
-                if (ex != null) {
-                    postEvent(PhotoListEvent.READ_EVENT, ex.getMessage());
+            public void onError(DatabaseError error) {
+                if (error != null) {
+                    post(PhotoListEvent.READ_EVENT, error.getMessage());
                 } else {
-                    postEvent(PhotoListEvent.READ_EVENT, "");
+                    post(PhotoListEvent.READ_EVENT, "");
                 }
+
+            }
+        });
+        firebase.subscribe(new FirebaseEventListenerCallback() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot) {
+                Photo photo = dataSnapshot.getValue(Photo.class);
+                photo.setId(dataSnapshot.getKey());
+
+                String email = firebase.getAuthEmail();
+                if(email==null)
+                    email="";
+                boolean publishedByMy = false;
+                if(photo.getEmail()==null)
+                    publishedByMy =false;
+                else
+                    publishedByMy = photo.getEmail().equals(email);
+                photo.setPublishedByMe(publishedByMy);
+                post(PhotoListEvent.READ_EVENT, photo);
             }
 
             @Override
-            public void onError(DatabaseError error) {
-                if (error != null) {
-                    postEvent(PhotoListEvent.READ_EVENT, error.getMessage());
-                } else {
-                    postEvent(PhotoListEvent.READ_EVENT, "");
-                }
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Photo photo = dataSnapshot.getValue(Photo.class);
+                photo.setId(dataSnapshot.getKey());
 
+                post(PhotoListEvent.DELETE_EVENT, photo);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                post(PhotoListEvent.READ_EVENT, error.getMessage());
             }
         });
     }
 
     @Override
     public void unsubscribe() {
-
         firebase.unsubscribe();
     }
 
     @Override
     public void remove(final Photo photo) {
-
         firebase.remove(photo, new FirebaseActionListenerCallback() {
             @Override
             public void onSuccess() {
-                postEvent(PhotoListEvent.DELETE_EVENT, photo);
+                post(PhotoListEvent.DELETE_EVENT, photo);
             }
 
             @Override
-            public void onException(Exception ex) {
+            public void onError(DatabaseError error) {
 
             }
-
-            @Override
-            public void onError(DatabaseError databaseError) {
-
-            }
-
-
         });
     }
 
-    private void postEvent(int type, Photo photo){
-        postEvent(type, photo, null);
+    private void post(int type, Photo photo){
+        post(type, photo, null);
     }
 
-    private void postEvent(int type, String error){
-        postEvent(type, null, error);
+    private void post(int type, String error){
+        post(type, null, error);
     }
 
-    private void postEvent(int type, Photo photo, String error){
+    private void post(int type, Photo photo, String error){
         PhotoListEvent event = new PhotoListEvent();
         event.setType(type);
         event.setError(error);

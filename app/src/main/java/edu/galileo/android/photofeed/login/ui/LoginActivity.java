@@ -22,7 +22,6 @@ import edu.galileo.android.photofeed.login.LoginPresenter;
 import edu.galileo.android.photofeed.main.ui.MainActivity;
 
 
-
 public class LoginActivity extends AppCompatActivity
                            implements LoginView {
     @Bind(R.id.btnSignin)           Button btnSignIn;

@@ -9,12 +9,14 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -117,7 +119,21 @@ public class PhotoMapFragment extends Fragment implements PhotoMapView, OnMapRea
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (map != null) {
-                        map.setMyLocationEnabled(true);
+
+
+                        if (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                                == PackageManager.PERMISSION_GRANTED) {
+                            map.setMyLocationEnabled(true);
+                        } else {
+                            Toast.makeText(this.getContext(), "You have to accept to enjoy all app's services!", Toast.LENGTH_LONG).show();
+                            if (ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                                    == PackageManager.PERMISSION_GRANTED) {
+                                map.setMyLocationEnabled(true);
+                            }
+                        }
+
+
+
                     }
                 }
                 return;

@@ -30,7 +30,6 @@ public class MainRepositoryImpl implements MainRepository {
         firebase.logout();
     }
 
-
     @Override
     public void uploadPhoto(Location location, String path) {
         final String newPhotoId = firebase.create();
@@ -42,7 +41,7 @@ public class MainRepositoryImpl implements MainRepository {
             photo.setLongitude(location.getLongitude());
         }
 
-        postEvent(MainEvent.UPLOAD_INIT);
+        post(MainEvent.UPLOAD_INIT);
         imageStorage.upload(new File(path), photo.getId(), new ImageStorageFinishedListener(){
 
             @Override
@@ -51,21 +50,21 @@ public class MainRepositoryImpl implements MainRepository {
                 photo.setUrl(url);
                 firebase.update(photo);
 
-                postEvent(MainEvent.UPLOAD_COMPLETE);
+                post(MainEvent.UPLOAD_COMPLETE);
             }
 
             @Override
             public void onError(String error) {
-                postEvent(MainEvent.UPLOAD_ERROR, error);
+                post(MainEvent.UPLOAD_ERROR, error);
             }
         });
     }
 
-    private void postEvent(int type){
-        postEvent(type, null);
+    private void post(int type){
+        post(type, null);
     }
 
-    private void postEvent(int type, String error){
+    private void post(int type, String error){
         MainEvent event = new MainEvent();
         event.setType(type);
         event.setError(error);

@@ -14,23 +14,21 @@ import edu.galileo.android.photofeed.domain.FirebaseAPI;
 import edu.galileo.android.photofeed.domain.Util;
 
 /**
- * Created by joedayz.
- * Updated by joedayz.
+ * Created by ykro.
  */
 @Module
 public class DomainModule {
-
+    private final static String FIREBASE_URL = "https://joe-android-photo-share.firebaseio.com/";
 
     @Provides
     @Singleton
-    FirebaseAPI providesFirebaseAPI(DatabaseReference databaseReference) {
-        return new FirebaseAPI(databaseReference);
+    FirebaseAPI providesFirebaseAPI(DatabaseReference firebase) {
+        return new FirebaseAPI(firebase);
     }
 
     @Provides
     @Singleton
-    DatabaseReference providesFirebase() {
-        return FirebaseDatabase.getInstance().getReference();
+    DatabaseReference providesFirebase() { return FirebaseDatabase.getInstance().getReferenceFromUrl(FIREBASE_URL);
     }
 
     @Provides

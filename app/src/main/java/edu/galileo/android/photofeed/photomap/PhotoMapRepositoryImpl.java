@@ -32,10 +32,14 @@ public class PhotoMapRepositoryImpl implements PhotoMapRepository {
                 photo.setId(dataSnapshot.getKey());
 
                 String email = firebase.getAuthEmail();
+                boolean publishedByMy = false;
+                if(photo.getEmail()==null)
+                    publishedByMy =false;
+                else
+                    publishedByMy = photo.getEmail().equals(email);
 
-                boolean publishedByMy = photo.getEmail()!=null?photo.getEmail().equals(email):false;
                 photo.setPublishedByMe(publishedByMy);
-                postEvent(PhotoMapEvent.READ_EVENT, photo);
+                post(PhotoMapEvent.READ_EVENT, photo);
             }
 
             @Override
@@ -43,33 +47,30 @@ public class PhotoMapRepositoryImpl implements PhotoMapRepository {
                 Photo photo = dataSnapshot.getValue(Photo.class);
                 photo.setId(dataSnapshot.getKey());
 
-                postEvent(PhotoMapEvent.DELETE_EVENT, photo);
+                post(PhotoMapEvent.DELETE_EVENT, photo);
             }
 
             @Override
             public void onCancelled(DatabaseError error) {
-                postEvent(error.getMessage());
+                post(error.getMessage());
             }
-
-
         });
     }
 
     @Override
     public void unsubscribe() {
-
         firebase.unsubscribe();
     }
 
-    private void postEvent(int type, Photo photo){
-        postEvent(type, photo, null);
+    private void post(int type, Photo photo){
+        post(type, photo, null);
     }
 
-    private void postEvent(String error){
-        postEvent(0, null, error);
+    private void post(String error){
+        post(0, null, error);
     }
 
-    private void postEvent(int type, Photo photo, String error){
+    private void post(int type, Photo photo, String error){
         PhotoMapEvent event = new PhotoMapEvent();
         event.setType(type);
         event.setError(error);

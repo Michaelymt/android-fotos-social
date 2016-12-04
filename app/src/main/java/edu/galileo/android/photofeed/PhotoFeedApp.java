@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
 
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
 
 import edu.galileo.android.photofeed.domain.di.DomainModule;
@@ -23,12 +22,14 @@ import edu.galileo.android.photofeed.photolist.di.PhotoListComponent;
 import edu.galileo.android.photofeed.photolist.di.PhotoListModule;
 import edu.galileo.android.photofeed.photolist.ui.PhotoListView;
 import edu.galileo.android.photofeed.photolist.ui.adapters.OnItemClickListener;
-
 import edu.galileo.android.photofeed.photomap.di.DaggerPhotoMapComponent;
 import edu.galileo.android.photofeed.photomap.di.PhotoMapComponent;
 import edu.galileo.android.photofeed.photomap.di.PhotoMapModule;
 import edu.galileo.android.photofeed.photomap.ui.PhotoMapView;
 
+/**
+ * Created by ykro.
+ */
 public class PhotoFeedApp extends Application {
     private final static String EMAIL_KEY = "email";
     private LibsModule libsModule;
@@ -49,7 +50,9 @@ public class PhotoFeedApp extends Application {
     }
 
     private void initFirebase() {
+        /*Firebase.setAndroidContext(this);*/
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
     }
 
     public static String getEmailKey() {

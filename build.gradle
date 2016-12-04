@@ -2,7 +2,8 @@
 
 buildscript {
     repositories {
-        jcenter()
+        //jcenter()
+        jcenter { url "http://jcenter.bintray.com" }
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.2'
@@ -15,7 +16,8 @@ buildscript {
 
 allprojects {
     repositories {
-        jcenter()
+       // jcenter()
+        jcenter { url "http://jcenter.bintray.com" }
     }
 }
 
@@ -29,11 +31,11 @@ ext {
     compileSdkVersion = 23
     buildToolsVersion = '23.0.2'
 
-    supportLibraryVersion = '23.3.0'
+    supportLibraryVersion = '23.1.1'
 
-    playServicesLocationVersion = '9.6.1'
+    playServicesLocationVersion = '9.0.0'
     circleImageViewVersion = '2.0.0'
-    firebaseVersion = '9.6.1'
+    firebaseClientVersion = '2.5.0'
     butterknifeVersion = '7.0.1'
     cloudinaryVersion = '1.1.2'
     eventbusVersion = '3.0.0'

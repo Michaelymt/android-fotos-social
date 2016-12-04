@@ -12,11 +12,12 @@ import edu.galileo.android.photofeed.login.LoginPresenter;
 import edu.galileo.android.photofeed.login.LoginPresenterImpl;
 import edu.galileo.android.photofeed.login.LoginRepository;
 import edu.galileo.android.photofeed.login.LoginRepositoryImpl;
+import edu.galileo.android.photofeed.login.SignupInteractor;
+import edu.galileo.android.photofeed.login.SignupInteractorImpl;
 import edu.galileo.android.photofeed.login.ui.LoginView;
 
 /**
  * Created by ykro.
- * Updated by joedayz.
  */
 @Module
 public class LoginModule {
@@ -32,8 +33,8 @@ public class LoginModule {
     }
 
     @Provides @Singleton
-    LoginPresenter providesLoginPresenter(EventBus eventBus, LoginView loginView, LoginInteractor loginInteractor) {
-        return new LoginPresenterImpl(eventBus, loginView, loginInteractor);
+    LoginPresenter providesLoginPresenter(EventBus eventBus, LoginView loginView, LoginInteractor loginInteractor, SignupInteractor signupInteractor) {
+        return new LoginPresenterImpl(eventBus, loginView, loginInteractor, signupInteractor);
     }
 
     @Provides @Singleton
@@ -42,7 +43,12 @@ public class LoginModule {
     }
 
     @Provides @Singleton
-    LoginRepository providesLoginRepository(FirebaseAPI firebaseAPI, EventBus eventBus) {
-        return new LoginRepositoryImpl(firebaseAPI, eventBus);
+    SignupInteractor providesSignupInteractor(LoginRepository repository) {
+        return new SignupInteractorImpl(repository);
+    }
+
+    @Provides @Singleton
+    LoginRepository providesLoginRepository(FirebaseAPI firebase, EventBus eventBus) {
+        return new LoginRepositoryImpl(firebase, eventBus);
     }
 }
